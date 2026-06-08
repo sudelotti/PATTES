@@ -4,8 +4,8 @@ PATTES, öğrencilerin ders çalışırken odaklarını artırmayı, sağlıklı
 
 ## 🌟 Temel Özellikler
 
-### 🗣️ Sesli Yapay Zeka Asistanı ("Hey Pattes")
-Sürekli dinleme yaparak gereksiz kaynak tüketiminin ve API çağrılarının önüne geçmek için sistem bir uyandırma kelimesiyle çalışır. Robota **"Hey Pattes"** dediğinizde yapay zeka aktifleşir, sorunuzu veya isteğinizi dinler ve size sesli olarak yanıt verir.
+### 🗣️ Sesli Yapay Zeka Asistanı ("Pattes")
+Sürekli dinleme yaparak gereksiz kaynak tüketiminin ve API çağrılarının önüne geçmek için sistem bir uyandırma kelimesiyle çalışır. Robota **"Pattes"** dediğinizde yapay zeka aktifleşir, sorunuzu veya isteğinizi dinler ve size sesli olarak yanıt verir.
 
 ### 🧘‍♀️ Postür ve Odak Takibi
 Kamera aracılığıyla kullanıcının oturuşunu ve odağını analiz eder. Kullanıcı ders çalışırken yamuk oturursa veya odağı dersten/ekrandan başka bir yere kayarsa, PATTES duruşunu düzeltmesi için kullanıcıyı uyarır.
@@ -88,21 +88,21 @@ Projenin donanım bileşenlerinin ESP32 üzerindeki bağlantı şeması, pin det
 PATTES'in bilgisayar/yapay zeka (OS) katmanı ile donanım katmanı arasındaki iletişim protokolleri ve veri akış yönleri aşağıdaki şemada gösterilmiştir:
 
 ```text
-         +-------------------------+
-         |    PATTES OS (PC/YAI)   |
-         +-------------------------+
-                      |
-         Seri Port (UART - 115200 Baud)
-                      |
-                      v
-+---------------------------------------------------+
-|                     ESP32 MCU                     |
-+---------------------------------------------------+
-   |         |         |         |         |         |
+               +-------------------------+
+               |    PATTES OS (PC/YAI)   |
+               +-------------------------+
+                            |
+              Seri Port (UART - 115200 Baud)
+                            |
+                            v
+   +---------------------------------------------------+
+   |                     ESP32 MCU                     |
+   +---------------------------------------------------+
+   |         |          |         |         |         |
   SPI       I2S       PWM     Digital   Digital    HX711
 Bus (O)   Bus (O)   Bus (O)   In (I)    Out (O)  Bus (I/O)
-   |         |         |         |         |         |
-   v         v         v         v         v         v
+   |         |          |         |         |         |
+   v         v          v         v         v         v
 +------+  +------+  +-------+ +-------+ +-------+ +-------+
 | OLED |  | I2S  |  | Aktif | | Touch | | Adres.| | HX711 |
 | Ekran|  | Amfi |  | Buzzer| |  Pad  | |  LED  | | Modülü|
