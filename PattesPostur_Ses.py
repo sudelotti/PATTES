@@ -280,26 +280,65 @@ with mp.tasks.vision.PoseLandmarker.create_from_options(pose_options) as pose_tr
 # ====================================================================
 # 5. KAPANIS VE RAPORLAMA
 # ====================================================================
+
 ses_kuyrugu.put(None) 
 cap.release()
 cv2.destroyAllWindows()
 
 if esp32_bagli:
-    esp32.write("0\n".encode()) 
-    esp32.close()
+    try:
+        esp32.write("0\n".encode()) 
+        esp32.close()
+    except:
+        pass
 
 bitis_zamani = time.time()
 gecen_sure = int(bitis_zamani - baslangic_zamani)
 dakika = gecen_sure // 60
 saniye = gecen_sure % 60
 
+# Gelişmiş İstatistik Hesaplamaları
+toplam_ihlal = sum(istatistikler.values())
+toplam_postur_ihlali = istatistikler['yakinlasma'] + istatistikler['kambur'] + istatistikler['kaykilma']
+toplam_odak_ihlali = istatistikler['yan_bakis'] + istatistikler['yukari_bakis'] + istatistikler['asagi_bakis']
+
+# Her 1 ihlal odaklanma skorunu 2 puan düşürür
+verimlilik_puani = max(0, 100 - (toplam_ihlal * 2))
+
 rapor_metni = f"""
 ==================================================
-        PATTES ÇALIŞMA OTURUMU RAPORU
+      PATTES DETAYLI ÇALIŞMA OTURUMU RAPORU
 ==================================================
 Tarih: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
-Toplam Süre: {dakika} dakika {saniye} saniye
+Toplam Çalışma Süresi: {dakika} dakika {saniye} saniye
+Genel Odaklanma Skoru: %{verimlilik_puani}
+
+[POSTÜR (DURUŞ) İHLALLERİ] - Toplam: {toplam_postur_ihlali}
+- Ekrana Fazla Yaklaşma : {istatistikler['yakinlasma']} kez
+- Öne Eğilme / Kambur   : {istatistikler['kambur']} kez
+- Arkaya Yaslanma       : {istatistikler['kaykilma']} kez
+
+[ODAK (DİKKAT) İHLALLERİ] - Toplam: {toplam_odak_ihlali}
+- Sağa/Sola Bakma       : {istatistikler['yan_bakis']} kez
+- Yukarı Bakma          : {istatistikler['yukari_bakis']} kez
+- İzinsiz Aşağı Bakma   : {istatistikler['asagi_bakis']} kez
 ==================================================
+"""
+
+# Yapay Zeka (PATTES) Değerlendirme Yorumu
+if verimlilik_puani >= 90:
+    rapor_metni += "PATTES YORUMU: Harika bir çalışma seansıydı! Mükemmel odaklandın.\n"
+elif verimlilik_puani >= 70:
+    rapor_metni += "PATTES YORUMU: İyi iş çıkardın ama duruşuna ve odağına biraz daha dikkat etmelisin.\n"
+else:
+    rapor_metni += "PATTES YORUMU: Bugün çok fazla bölündün. Bir dahaki sefere telefonu ve çevreyi unutmalısın!\n"
+
+rapor_metni += "==================================================\n"
+
+with open("PATTES_Rapor.txt", "w", encoding="utf-8") as dosya:
+    dosya.write(rapor_metni)
+
+print(f"\nOturum kapatıldı. Detaylı rapor 'PATTES_Rapor.txt' dosyasına başarıyla işlendi!")
 """
 
 with open("PATTES_Rapor.txt", "w", encoding="utf-8") as dosya:
