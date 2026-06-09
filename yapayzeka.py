@@ -1,3 +1,4 @@
+import os
 import time
 import pyttsx3
 import speech_recognition as sr
@@ -8,10 +9,10 @@ import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 # Kopyaladığın DeepSeek API şifren
-API_KEY = "sk-71672d08cae344f88c2d481ad303114a"
+API_KEY = os.getenv("DEEPSEEK_API_KEY")
 
-if not API_KEY or API_KEY == "BURAYA_DEEPSEEK_SIFREN_GELECEK":
-    print("❌ Hata: Lütfen kodun içindeki API_KEY kısmına kendi şifreni yapıştır!")
+if not API_KEY:
+    print("❌ Hata: Bilgisayarda API şifresi bulunamadı!")
     exit()
 
 def deepseek_cevap_uret(kullanici_sorusu):
